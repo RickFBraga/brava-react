@@ -116,7 +116,7 @@ export default function Portfolio() {
               e.preventDefault();
               scrollToSection(contactRef);
             }}
-            className="inline-flex items-center bg-[#FF0054] hover:bg-[#9E0059]/90 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105"
+            className="inline-flex items-center bg-[#FF0054] hover:bg-[#9E0059]/90 text-white relative font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105"
           >
             Start Your Project <ArrowRight className="ml-2 h-5 w-5" />
           </a>

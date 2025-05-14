@@ -8,7 +8,7 @@ export default function Contact() {
     <section
       ref={contactRef}
       id="contact"
-      className="py-20 bg-gradient-to-br from-[#9E0059] to-[#FF0054] dark:from-[#3a0a3a] dark:to-[#6a0f48] text-white"
+      className="py-20 bg-transparent shadow-2xl rounded-4xl border-[#9E0059] from-[#9E0059] to-[#FF0054] dark:from-[#3a0a3a] dark:to-[#6a0f48] text-white"
     >
       <div className="container mx-auto px-4">
         <motion.div
