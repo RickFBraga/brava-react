@@ -7,7 +7,9 @@ export default defineConfig({
   plugins: [react(), tailwindcss(), tsconfigPaths()],
   preview: {
     host: '0.0.0.0',
-    port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
+    port: Number(process.env.PORT) || 3000,
+    strictPort: true,
+    allowedHosts: ['brava-react.onrender.com']
   },
   server: {
     host: '0.0.0.0',
