@@ -6,6 +6,7 @@ import Portfolio from "./components/Portfolio";
 import Pricing from "./components/Pricing";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import AboutUs from "@/components/AboutUs";
 
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -31,7 +32,7 @@ function App() {
     <main className="min-h-screen">
       <button
         onClick={() => setDarkMode(!darkMode)}
-        className="fixed right-4 top-4 z-[999] p-2 rounded-full bg-gray-800 shadow-lg hover:scale-110 transition-transform duration-300 cursor-pointer"
+        className="fixed right-4 top-4 z-[999] p-2 rounded-full transition-transform duration-300 cursor-pointer"
         aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
       >
         {darkMode ? (
@@ -41,6 +42,7 @@ function App() {
         )}
       </button>
       <Header />
+      <AboutUs />
       <Portfolio />
       <Pricing />
       <Contact />

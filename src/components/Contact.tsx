@@ -6,180 +6,165 @@ import axios from "axios";
 export default function Contact() {
   const contactRef = useRef<HTMLDivElement>(null);
 
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
 
-  function submitForm() {
-    if (name == "" || email == "" || phone == "" || message == "") {
+  async function submitForm() {
+    if (!firstName || lastName || !email || !phone || !message) {
       toast("Por favor, preencha todos os campos!");
       return;
     }
 
     const formData = {
-      name: name,
-      email: email,
-      phone: phone,
-      message: message,
+      firstName,
+      lastName,
+      email,
+      phone,
+      message,
     };
 
     const endpoint = "http://localhost:3000/contact";
 
     try {
-      axios.post(endpoint, formData);
-
-      toast("Sucesso!");
-      setName("");
+      await axios.post(endpoint, formData);
+      toast.success("Cadastro feito com sucesso!");
+      setFirstName("");
+      setLastName("");
       setEmail("");
       setPhone("");
       setMessage("");
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("Ocorreu um erro ao fazer o cadastro.");
     }
   }
 
   return (
-    <section
-      ref={contactRef}
-      id="contact"
-      className="py-20 bg-transparent shadow-2xl rounded-4xl border-[#9E0059] from-[#9E0059] to-[#FF0054] dark:from-[#3a0a3a] dark:to-[#6a0f48] text-white"
-    >
-      <ToastContainer />
+    <div ref={contactRef} className="w-full">
+      <ToastContainer position="top-center" autoClose={3000} />
 
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
+      <motion.form
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-4 md:p-6 shadow-lg"
+        onSubmit={(e) => {
+          e.preventDefault();
+          submitForm();
+        }}
+      >
+        <motion.h2
+          className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4 text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Ready to Get Started?
-          </h2>
-          <p className="max-w-2xl mx-auto opacity-90">
-            Fill out the form below and we'll get back to you within 24 hours.
-          </p>
-        </motion.div>
+          Contact Us
+        </motion.h2>
 
-        <div className="max-w-3xl mx-auto relative z-10">
-          <motion.form
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 rounded-2xl p-8 shadow-xl dark:shadow-lg dark:shadow-[#3a0a3a]/50"
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div>
-                <motion.label
-                  htmlFor="name"
-                  className="block text-sm font-medium mb-2 dark:text-gray-300"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  Name
-                </motion.label>
-                <motion.input
-                  type="text"
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#FF0054] focus:border-transparent dark:bg-gray-800 dark:text-white transition-colors"
-                  placeholder="Your name"
-                  initial={{ y: 10, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.4 }}
-                />
-              </div>
-              <div>
-                <motion.label
-                  htmlFor="email"
-                  className="block text-sm font-medium mb-2 dark:text-gray-300"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.35 }}
-                >
-                  Email
-                </motion.label>
-                <motion.input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#FF0054] focus:border-transparent dark:bg-gray-800 dark:text-white transition-colors"
-                  placeholder="your@email.com"
-                  initial={{ y: 10, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.45 }}
-                />
-              </div>
-            </div>
-
-            <div className="mb-6">
-              <motion.label
-                htmlFor="phone"
-                className="block text-sm font-medium mb-2 dark:text-gray-300"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-              >
-                Phone
-              </motion.label>
-              <motion.input
-                type="tel"
-                id="phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#FF0054] focus:border-transparent dark:bg-gray-800 dark:text-white transition-colors"
-                placeholder="0000-0000"
-                initial={{ y: 10, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.5 }}
-              />
-            </div>
-
-            <div className="mb-6">
-              <motion.label
-                htmlFor="message"
-                className="block text-sm font-medium mb-2 dark:text-gray-300"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.45 }}
-              >
-                Message
-              </motion.label>
-              <motion.textarea
-                id="message"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                rows={5}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#FF0054] focus:border-transparent dark:bg-gray-800 dark:text-white transition-colors"
-                placeholder="Tell us about your project..."
-                initial={{ y: 10, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.55 }}
-              ></motion.textarea>
-            </div>
-
-            <motion.button
-              type="submit"
-              onClick={submitForm}
-              className="w-full bg-[#FF0054] cursor-pointer hover:bg-[#FF0054]/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-md dark:shadow-[#FF0054]/30"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
+        {/* Grid responsivo para nomes */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-3 md:mb-4">
+          <div>
+            <label
+              htmlFor="firstName"
+              className="block text-xs md:text-sm font-medium text-white/80 mb-1"
             >
-              Send Message
-            </motion.button>
-          </motion.form>
+              First Name
+            </label>
+            <input
+              type="text"
+              id="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              className="w-full px-3 py-2 text-sm md:text-base bg-white/10 border border-white/20 rounded-md text-white focus:outline-none focus:ring-1 focus:ring-[#FF0054]"
+              placeholder="First name"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="lastName"
+              className="block text-xs md:text-sm font-medium text-white/80 mb-1"
+            >
+              Last Name
+            </label>
+            <input
+              type="text"
+              id="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              className="w-full px-3 py-2 text-sm md:text-base bg-white/10 border border-white/20 rounded-md text-white focus:outline-none focus:ring-1 focus:ring-[#FF0054]"
+              placeholder="Last name"
+            />
+          </div>
         </div>
-      </div>
-    </section>
+
+        {/* Campos individuais */}
+        <div className="space-y-3 md:space-y-4">
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-xs md:text-sm font-medium text-white/80 mb-1"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-3 py-2 text-sm md:text-base bg-white/10 border border-white/20 rounded-md text-white focus:outline-none focus:ring-1 focus:ring-[#FF0054]"
+              placeholder="your@email.com"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="phone"
+              className="block text-xs md:text-sm font-medium text-white/80 mb-1"
+            >
+              Phone
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full px-3 py-2 text-sm md:text-base bg-white/10 border border-white/20 rounded-md text-white focus:outline-none focus:ring-1 focus:ring-[#FF0054]"
+              placeholder="(123) 456-7890"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="message"
+              className="block text-xs md:text-sm font-medium text-white/80 mb-1"
+            >
+              Message
+            </label>
+            <textarea
+              id="message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              rows={3}
+              className="w-full px-3 py-2 text-sm md:text-base bg-white/10 border border-white/20 rounded-md text-white focus:outline-none focus:ring-1 focus:ring-[#FF0054]"
+              placeholder="Tell us about your project..."
+            />
+          </div>
+        </div>
+
+        {/* Botão de submit */}
+        <motion.button
+          type="submit"
+          className="w-full mt-4 md:mt-6 bg-gradient-to-r from-[#FF0054] to-[#FF3366] text-white text-sm md:text-base font-medium py-2 px-4 rounded-md hover:opacity-90 transition-opacity"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          Send Message
+        </motion.button>
+      </motion.form>
+    </div>
   );
 }

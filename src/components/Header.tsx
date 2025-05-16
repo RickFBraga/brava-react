@@ -2,7 +2,7 @@ import Contact from "@/components/Contact";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Menu } from "lucide-react";
+import { ArrowDown, ArrowRight, Menu } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Logo from "../assets/Logo.png";
 
@@ -12,7 +12,7 @@ export default function Header() {
   const [init, setInit] = useState(false);
   const heroRef = useRef(null);
   const menuItems = [
-    { name: "Home", href: "#home" },
+    { name: "Portfolio", href: "#portfolio" },
     { name: "About Us", href: "#about" },
     { name: "Contact", href: "#contact" },
     { name: "Blog", href: "#blog" },
@@ -22,6 +22,51 @@ export default function Header() {
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.9]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Counter = ({ value, duration = 2 }: any) => {
+    const [count, setCount] = useState(0);
+    const [started, setStarted] = useState(false);
+    const ref = useRef(null);
+
+    useEffect(() => {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting && !started) {
+            setStarted(true);
+            let start = 0;
+            const end = value;
+            const increment = end / (duration * 60);
+
+            const timer = setInterval(() => {
+              start += increment;
+              if (start >= end) {
+                setCount(end);
+                clearInterval(timer);
+              } else {
+                setCount(Math.ceil(start));
+              }
+            }, 1000 / 60);
+
+            return () => clearInterval(timer);
+          }
+        },
+        { threshold: 0.5 }
+      );
+
+      if (ref.current) {
+        observer.observe(ref.current);
+      }
+
+      return () => {
+        if (ref.current) {
+          observer.unobserve(ref.current);
+        }
+      };
+    }, [value, duration, started]);
+
+    return <span ref={ref}>{started ? count : 0}</span>;
+  };
 
   const particlesOptions = {
     background: {
@@ -126,34 +171,68 @@ export default function Header() {
       ref={heroRef}
       className="relative h-screen overflow-hidden bg-gradient-to-br from-[#9E0059] to-black dark:from-[#3a0a3a] dark:to-[#6a0f48]"
     >
-      <nav className="absolute top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-md">
-        <div className="px-4 py-4 flex justify-between items-center">
-          {/* Logo com animação */}
+      {init && (
+        <Particles
+          id="tsparticles"
+          className="absolute inset-0 z-0"
+          options={{
+            ...particlesOptions,
+            particles: {
+              ...particlesOptions.particles,
+              color: {
+                value: ["#FF0054", "#FFFFFF", "#9E0059"],
+              },
+              move: {
+                enable: true,
+                speed: 1.5,
+                direction: "none",
+                random: true,
+                straight: false,
+                outModes: "out",
+              },
+            },
+          }}
+        />
+      )}
+
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-1/4 -left-1/4 w-[150%] h-[150%] bg-radial-gradient from-[#FF0054]/20 via-transparent to-transparent opacity-70 animate-pulse-slow"></div>
+      </div>
+
+      <nav className="fixed w-full top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-md border-b border-white/10">
+        <div className="px-6 py-4 flex justify-between items-center">
           <motion.a
             href="#home"
-            className="text-3xl flex items-center gap-3 font-bold text-[#FF0054]"
+            className="text-3xl flex items-center gap-3 font-bold text-[#FF0054] group"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
-            <motion.img
-              src={Logo}
-              alt=""
-              className="w-9 h-9 rounded-full"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring" }}
-            />
-            BravaCraft
+            <motion.div
+              className="relative"
+              whileHover={{ rotate: 360 }}
+              transition={{ duration: 1 }}
+            >
+              <motion.img
+                src={Logo}
+                alt="BravaCraft Logo"
+                className="w-9 h-9 rounded-full group-hover:shadow-[0_0_20px_#FF0054] transition-all"
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 150 }}
+              />
+            </motion.div>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FF0054] to-[#FF8A9E]">
+              BravaCraft
+            </span>
           </motion.a>
 
-          {/* Itens de navegação com animação em cascata */}
-          <div className="hidden md:flex space-x-8 mr-16">
+          <div className="hidden md:flex space-x-8 mr-16 items-center">
             {menuItems.map((item, i) => (
               <motion.a
                 key={item.href}
                 href={item.href}
-                className="text-white hover:text-[#FF0054] transition-colors font-medium relative"
+                className="text-white/90 hover:text-[#FF0054] transition-colors font-medium relative group"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
@@ -168,39 +247,53 @@ export default function Header() {
               >
                 {item.name}
                 <motion.span
-                  className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FF0054]"
+                  className="absolute bottom-0 left-0 w-0 h-[2px] bg-gradient-to-r from-[#FF0054] to-[#FF8A9E]"
                   whileHover={{ width: "100%" }}
                   transition={{ duration: 0.3 }}
                 />
               </motion.a>
             ))}
+
+            <motion.a
+              href="#contact"
+              className="ml-4 px-6 py-2 bg-gradient-to-r from-[#FF0054] to-[#FF3366] rounded-full text-white font-medium shadow-lg hover:shadow-[#FF0054]/50 transition-all"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7 }}
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0 0 15px rgba(255, 0, 84, 0.7)",
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Contact Us
+            </motion.a>
           </div>
 
-          {/* Botão mobile com animação */}
           <motion.button
-            className="md:hidden text-white"
+            className="md:hidden text-white p-2 rounded-full hover:bg-white/10 transition-colors"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             whileTap={{ scale: 0.9 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            aria-label="Menu"
           >
-            <Menu size={24} />
+            <Menu size={28} />
           </motion.button>
         </div>
 
-        {/* Menu mobile com animação */}
         {mobileMenuOpen && (
           <motion.div
-            className="md:hidden bg-black/90 px-4 py-2"
+            className="md:hidden bg-gradient-to-b from-black/95 to-[#1a001a] px-6 py-4 border-t border-white/10"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             {menuItems.map((item, i) => (
               <motion.a
                 key={item.href}
                 href={item.href}
-                className="block py-2 text-white hover:text-[#FF0054] transition-colors"
+                className="block py-3 text-white/90 hover:text-[#FF0054] transition-colors border-b border-white/5 last:border-0 group"
                 onClick={() => setMobileMenuOpen(false)}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -209,22 +302,32 @@ export default function Header() {
                   duration: 0.3,
                 }}
               >
-                {item.name}
+                <div className="flex items-center">
+                  <motion.span
+                    className="w-2 h-2 bg-[#FF0054] rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"
+                    animate={{ opacity: [0, 1, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  />
+                  {item.name}
+                </div>
               </motion.a>
             ))}
+
+            <motion.a
+              href="#contact"
+              className="block mt-4 py-3 px-4 text-center bg-gradient-to-r from-[#FF0054] to-[#FF3366] rounded-full text-white font-medium"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 + menuItems.length * 0.05 }}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Get in Touch
+            </motion.a>
           </motion.div>
         )}
       </nav>
-      {init && (
-        <Particles
-          id="tsparticles"
-          className="absolute inset-0"
-          options={particlesOptions}
-        />
-      )}
-      <div className="absolute inset-0 bg-opacity-50"></div>
 
-      <div className="container mx-auto h-full flex flex-col lg:flex-row items-center justify-between px-4">
+      <div className="container mx-auto h-full flex flex-col lg:flex-row items-center justify-between px-6 relative z-10">
         <motion.div
           style={{ opacity, scale }}
           className="z-10 w-full lg:w-1/2 py-12 lg:py-0"
@@ -246,7 +349,7 @@ export default function Header() {
                 ease: [0.16, 1, 0.3, 1],
                 staggerChildren: 0.1,
               }}
-              className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 flex flex-wrap justify-center lg:justify-start"
+              className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 flex flex-wrap justify-center lg:justify-start leading-tight"
             >
               {["B", "r", "a", "v", "a"].map((letter, i) => (
                 <motion.span
@@ -258,7 +361,11 @@ export default function Header() {
                     delay: i * 0.05,
                     ease: [0.22, 1, 0.36, 1],
                   }}
-                  className="text-[#FF0054]"
+                  className="text-[#FF0054] hover:text-white transition-colors cursor-default"
+                  whileHover={{
+                    scale: 1.2,
+                    textShadow: "0 0 10px rgba(255, 0, 84, 0.7)",
+                  }}
                 >
                   {letter}
                 </motion.span>
@@ -287,6 +394,11 @@ export default function Header() {
                     delay: 0.5 + i * 0.05,
                     ease: [0.22, 1, 0.36, 1],
                   }}
+                  className="hover:text-[#FF0054] transition-colors cursor-default"
+                  whileHover={{
+                    scale: 1.2,
+                    textShadow: "0 0 10px rgba(255, 255, 255, 0.7)",
+                  }}
                 >
                   {letter}
                 </motion.span>
@@ -298,11 +410,40 @@ export default function Header() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-xl md:text-2xl text-white mb-8 max-w-3xl mx-auto lg:mx-0"
+            className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto lg:mx-0 leading-relaxed"
           >
-            Elevate your online presence with our premium WordPress solutions.
-            Custom-designed websites that capture your brand's essence.
+            We craft{" "}
+            <span className="text-[#FF0054] font-semibold">
+              exceptional digital experiences
+            </span>{" "}
+            that elevate your brand and captivate your audience. Our WordPress
+            solutions combine stunning design with powerful functionality.
           </motion.p>
+          <motion.div
+            className="flex flex-wrap gap-6 mb-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
+            <div className="bg-white/5 backdrop-blur-sm p-4 rounded-xl border border-white/10">
+              <div className="text-3xl font-bold text-[#FF0054]">
+                <Counter value={25} />+
+              </div>
+              <div className="text-white/80">Successful Projects</div>
+            </div>
+            <div className="bg-white/5 backdrop-blur-sm p-4 rounded-xl border border-white/10">
+              <div className="text-3xl font-bold text-[#FF0054]">
+                <Counter value={2} />+
+              </div>
+              <div className="text-white/80">Years in Business</div>
+            </div>
+            <div className="bg-white/5 backdrop-blur-sm p-4 rounded-xl border border-white/10">
+              <div className="text-3xl font-bold text-[#FF0054]">
+                <Counter value={90} />%
+              </div>
+              <div className="text-white/80">Client Retention</div>
+            </div>
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -310,50 +451,129 @@ export default function Header() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
           >
-            <a
+            <motion.a
               href="#portfolio"
               onClick={(e) => {
                 e.preventDefault();
                 scrollToSection(portfolioRef);
               }}
-              className="bg-[#FF0054] hover:bg-[#FF0054]/90 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105"
+              className="relative overflow-hidden bg-gradient-to-r from-[#FF0054] to-[#FF3366] hover:from-[#FF3366] hover:to-[#FF0054] text-white font-bold py-3 px-8 rounded-full transition-all duration-300 group"
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0 0 20px rgba(255, 0, 84, 0.5)",
+              }}
+              whileTap={{ scale: 0.95 }}
             >
-              View Our Work
-            </a>
-            <a
+              <span className="relative z-10">View Our Work</span>
+              <motion.span
+                className="absolute inset-0 bg-gradient-to-r from-[#FF3366] to-[#FF0054] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                initial={{ x: "-100%" }}
+                animate={{ x: "100%" }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+              />
+            </motion.a>
+
+            <motion.a
               href="#contact"
               onClick={(e) => {
                 e.preventDefault();
                 scrollToSection(contactRef);
               }}
-              className="bg-transparent hover:bg-white/10 text-white border-2 border-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105"
+              className="relative overflow-hidden bg-transparent hover:bg-white/10 text-white border-2 border-white/30 hover:border-[#FF0054] font-bold py-3 px-8 rounded-full transition-all duration-300 group"
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0 0 15px rgba(255, 255, 255, 0.3)",
+              }}
+              whileTap={{ scale: 0.95 }}
             >
-              Get in Touch
-            </a>
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                Get in Touch
+                <motion.span
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  <ArrowRight size={18} />
+                </motion.span>
+              </span>
+              <motion.span className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </motion.a>
           </motion.div>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="w-full rounded-md flex items-center justify-center lg:justify-end relative z-10 "
+          initial={{ opacity: 0, x: 50, scale: 0.9 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.6, type: "spring" }}
+          className="w-full lg:w-[45%] rounded-2xl flex items-center justify-center lg:justify-end relative z-10 mt-12 lg:mt-18"
         >
-          <div className=" bg-transparent p-2 ml-40 rounded-2xl mt-20 w-full">
+          <motion.div
+            className="bg-gradient-to-br from-white/5 to-black/20 backdrop-blur-sm border border-white/10 rounded-2xl p-5 w-full max-w-md shadow-xl"
+            whileHover={{
+              boxShadow: "0 0 30px rgba(255, 0, 84, 0.3)",
+            }}
+            transition={{ duration: 0.5 }}
+          >
+            <motion.h2
+              className="text-2xl font-bold text-white mb-6 text-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+            >
+              Ready to <span className="text-[#FF0054]">Elevate</span> Your
+              Brand?
+            </motion.h2>
+
             <Contact />
-          </div>
+
+            <motion.div
+              className="mt-6 text-center text-white/70 text-sm"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+            >
+              We'll get back to you within 24 hours
+            </motion.div>
+          </motion.div>
         </motion.div>
       </div>
 
-      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10 lg:hidden">
+      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10">
         <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.5 }}
-          className="text-white"
+          animate={{
+            y: [0, 15, 0],
+            opacity: [0.6, 1, 0.6],
+          }}
+          transition={{
+            repeat: Number.POSITIVE_INFINITY,
+            duration: 2,
+            ease: "easeInOut",
+          }}
+          className="flex flex-col items-center text-white/80 hover:text-white cursor-pointer"
+          onClick={() =>
+            window.scrollBy({
+              top: window.innerHeight - 100,
+              behavior: "smooth",
+            })
+          }
         >
-          <ArrowRight className="h-8 w-8 rotate-90" />
+          <div className="text-sm mb-2">Explore More</div>
+          <motion.div
+            className="h-8 w-8 rounded-full border-2 border-white/50 flex items-center justify-center"
+            whileHover={{
+              borderColor: "#FF0054",
+              scale: 1.1,
+            }}
+          >
+            <ArrowDown size={20} />
+          </motion.div>
         </motion.div>
       </div>
+
+      <div className="absolute -right-1/4 -top-1/4 w-1/2 h-1/2 rounded-full bg-[#FF0054] opacity-20 blur-[100px] pointer-events-none"></div>
     </section>
   );
 }
