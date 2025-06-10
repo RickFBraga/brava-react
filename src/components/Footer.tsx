@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white py-12 relative">
-      <div className="container mx-auto px-4">
+    <footer className=" text-white py-12  bg-gradient-to-br from-[#9E0059] to-black dark:from-[#3a0a3a] dark:to-[#6a0f48]">
+      <div className="container mx-auto px-4 relative">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <h3 className="text-2xl font-bold mb-4">
@@ -110,34 +110,11 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <a
+                  id="aboutus"
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors duration-300"
                 >
                   About Us
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors duration-300"
-                >
-                  Our Work
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors duration-300"
-                >
-                  Blog
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors duration-300"
-                >
-                  Careers
                 </a>
               </li>
               <li>
@@ -161,7 +138,7 @@ export default function Footer() {
             </address>
           </div>
         </div>
-        <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+        <div className="border-t border-gray-400 mt-12 pt-8 text-center text-gray-400">
           <p>
             &copy; {new Date().getFullYear()} Brava Craft. All rights reserved.
           </p>

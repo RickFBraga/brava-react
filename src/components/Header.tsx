@@ -2,72 +2,65 @@ import Contact from "@/components/Contact";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowDown, ArrowRight, Menu } from "lucide-react";
+import {
+  ArrowDown,
+  Headset,
+  LayoutDashboard,
+  Menu,
+  ThumbsUp,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Logo from "../assets/Logo.png";
 
 export default function Header() {
-  const portfolioRef = useRef<HTMLDivElement>(null);
-  const contactRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    initParticlesEngine(async (engine) => {
+      await loadSlim(engine);
+    }).then(() => {
+      setInit(true);
+    });
+  }, []);
+
+  useEffect(() => {
+    initParticlesEngine(async (engine) => {
+      await loadSlim(engine);
+    }).then(() => {
+      setInit(true);
+    });
+  }, []);
   const [init, setInit] = useState(false);
-  const heroRef = useRef(null);
-  const menuItems = [
-    { name: "Portfolio", href: "#portfolio" },
-    { name: "About Us", href: "#about" },
-    { name: "Contact", href: "#contact" },
-    { name: "Blog", href: "#blog" },
-  ];
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.9]);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const heroRef = useRef(null);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const Counter = ({ value, duration = 2 }: any) => {
-    const [count, setCount] = useState(0);
-    const [started, setStarted] = useState(false);
-    const ref = useRef(null);
-
-    useEffect(() => {
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting && !started) {
-            setStarted(true);
-            let start = 0;
-            const end = value;
-            const increment = end / (duration * 60);
-
-            const timer = setInterval(() => {
-              start += increment;
-              if (start >= end) {
-                setCount(end);
-                clearInterval(timer);
-              } else {
-                setCount(Math.ceil(start));
-              }
-            }, 1000 / 60);
-
-            return () => clearInterval(timer);
-          }
-        },
-        { threshold: 0.5 }
-      );
-
-      if (ref.current) {
-        observer.observe(ref.current);
-      }
-
-      return () => {
-        if (ref.current) {
-          observer.unobserve(ref.current);
-        }
-      };
-    }, [value, duration, started]);
-
-    return <span ref={ref}>{started ? count : 0}</span>;
-  };
-
+  const menuItems = [
+    { name: "About Us", href: "#aboutus" },
+    { name: "Services", href: "#services" },
+    { name: "Contact", href: "#contact" },
+  ];
+  const features = [
+    {
+      icon: <ThumbsUp className="text-[#FF0054]" size={32} />,
+      title: "Commitment to Quality",
+      description:
+        "Every project is crafted with dedication and attention to detail.",
+    },
+    {
+      icon: <Headset className="text-[#FF0054]" size={32} />,
+      title: "Personalized Support",
+      description:
+        "We're always available to understand and meet your specific needs.",
+    },
+    {
+      icon: <LayoutDashboard className="text-[#FF0054]" size={32} />,
+      title: "User-Centered Design",
+      description:
+        "We design intuitive and enjoyable experiences that truly work.",
+    },
+  ];
   const particlesOptions = {
     background: {
       color: {
@@ -137,39 +130,11 @@ export default function Header() {
     detectRetina: true,
   };
 
-  useEffect(() => {
-    initParticlesEngine(async (engine) => {
-      await loadSlim(engine);
-    }).then(() => {
-      setInit(true);
-    });
-  }, []);
-
-  useEffect(() => {
-    initParticlesEngine(async (engine) => {
-      await loadSlim(engine);
-    }).then(() => {
-      setInit(true);
-    });
-  }, []);
-
-  const scrollToSection = (
-    elementRef: React.RefObject<HTMLElement | null>
-  ): void => {
-    if (elementRef?.current) {
-      window.scrollTo({
-        top: elementRef.current.offsetTop,
-        behavior: "smooth",
-      });
-    } else {
-      console.warn("Element reference not available");
-    }
-  };
-
   return (
     <section
       ref={heroRef}
-      className="relative h-screen overflow-hidden bg-gradient-to-br from-[#9E0059] to-black dark:from-[#3a0a3a] dark:to-[#6a0f48]"
+      id="contact"
+      className="relative h-screen overflow-hidden md:mt-0 pt-10 bg-gradient-to-br from-[#9E0059] to-black dark:from-[#3a0a3a] dark:to-[#6a0f48]"
     >
       {init && (
         <Particles
@@ -361,11 +326,7 @@ export default function Header() {
                     delay: i * 0.05,
                     ease: [0.22, 1, 0.36, 1],
                   }}
-                  className="text-[#FF0054] hover:text-white transition-colors cursor-default"
-                  whileHover={{
-                    scale: 1.2,
-                    textShadow: "0 0 10px rgba(255, 0, 84, 0.7)",
-                  }}
+                  className="text-[#FF0054] transition-colors cursor-default"
                 >
                   {letter}
                 </motion.span>
@@ -394,11 +355,7 @@ export default function Header() {
                     delay: 0.5 + i * 0.05,
                     ease: [0.22, 1, 0.36, 1],
                   }}
-                  className="hover:text-[#FF0054] transition-colors cursor-default"
-                  whileHover={{
-                    scale: 1.2,
-                    textShadow: "0 0 10px rgba(255, 255, 255, 0.7)",
-                  }}
+                  className="transition-colors cursor-default"
                 >
                   {letter}
                 </motion.span>
@@ -412,96 +369,44 @@ export default function Header() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto lg:mx-0 leading-relaxed"
           >
-            We craft{" "}
+            Elevate your brand with{" "}
             <span className="text-[#FF0054] font-semibold">
-              exceptional digital experiences
-            </span>{" "}
-            that elevate your brand and captivate your audience. Our WordPress
-            solutions combine stunning design with powerful functionality.
+              seamless digital experiences
+            </span>
+            . We design and build beautiful, intuitive websites using WordPress
+            and React - crafted to engage and convert. Backed by strategic
+            marketing, we ensure your message reaches the right audience with
+            precision.
           </motion.p>
+
           <motion.div
-            className="flex flex-wrap gap-6 mb-8"
+            className="flex flex-wrap md:flex-nowrap justify-center gap-6 mb-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            <div className="bg-white/5 backdrop-blur-sm p-4 rounded-xl border border-white/10">
-              <div className="text-3xl font-bold text-[#FF0054]">
-                <Counter value={25} />+
-              </div>
-              <div className="text-white/80">Successful Projects</div>
-            </div>
-            <div className="bg-white/5 backdrop-blur-sm p-4 rounded-xl border border-white/10">
-              <div className="text-3xl font-bold text-[#FF0054]">
-                <Counter value={2} />+
-              </div>
-              <div className="text-white/80">Years in Business</div>
-            </div>
-            <div className="bg-white/5 backdrop-blur-sm p-4 rounded-xl border border-white/10">
-              <div className="text-3xl font-bold text-[#FF0054]">
-                <Counter value={90} />%
-              </div>
-              <div className="text-white/80">Client Retention</div>
-            </div>
+            {features.map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.2 }}
+                className="bg-white/5 backdrop-blur-sm p-4 rounded-xl border border-white/10 w-full max-w-xs"
+              >
+                <div className="text-4xl mb-2">{item.icon}</div>
+                <div className="text-xl font-bold text-white mb-1">
+                  {item.title}
+                </div>
+                <div className="text-white/80 text-sm">{item.description}</div>
+              </motion.div>
+            ))}
           </motion.div>
-
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
             className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
-          >
-            <motion.a
-              href="#portfolio"
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToSection(portfolioRef);
-              }}
-              className="relative overflow-hidden bg-gradient-to-r from-[#FF0054] to-[#FF3366] hover:from-[#FF3366] hover:to-[#FF0054] text-white font-bold py-3 px-8 rounded-full transition-all duration-300 group"
-              whileHover={{
-                scale: 1.05,
-                boxShadow: "0 0 20px rgba(255, 0, 84, 0.5)",
-              }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span className="relative z-10">View Our Work</span>
-              <motion.span
-                className="absolute inset-0 bg-gradient-to-r from-[#FF3366] to-[#FF0054] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                initial={{ x: "-100%" }}
-                animate={{ x: "100%" }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-              />
-            </motion.a>
-
-            <motion.a
-              href="#contact"
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToSection(contactRef);
-              }}
-              className="relative overflow-hidden bg-transparent hover:bg-white/10 text-white border-2 border-white/30 hover:border-[#FF0054] font-bold py-3 px-8 rounded-full transition-all duration-300 group"
-              whileHover={{
-                scale: 1.05,
-                boxShadow: "0 0 15px rgba(255, 255, 255, 0.3)",
-              }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span className="relative z-10 flex items-center justify-center gap-2">
-                Get in Touch
-                <motion.span
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  <ArrowRight size={18} />
-                </motion.span>
-              </span>
-              <motion.span className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </motion.a>
-          </motion.div>
+          ></motion.div>
         </motion.div>
 
         <motion.div
@@ -512,9 +417,6 @@ export default function Header() {
         >
           <motion.div
             className="bg-gradient-to-br from-white/5 to-black/20 backdrop-blur-sm border border-white/10 rounded-2xl p-5 w-full max-w-md shadow-xl"
-            whileHover={{
-              boxShadow: "0 0 30px rgba(255, 0, 84, 0.3)",
-            }}
             transition={{ duration: 0.5 }}
           >
             <motion.h2
